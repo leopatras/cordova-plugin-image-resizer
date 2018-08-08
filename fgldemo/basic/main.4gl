@@ -33,10 +33,12 @@ FUNCTION resizeAndShow(uri STRING)
     base64 BOOLEAN
   END RECORD
   LET argrec.uri=uri
-  LET argrec.filename="imgdummy.jpg"
+  LET argrec.filename="dummy" --*must* have a value <> NULL
   LET argrec.width=400
   LET argrec.height=400
   LET argrec.quality=90
+  --you don't need the base64 option, this will add additional
+  --conversion steps
   CALL ui.Interface.frontCall("cordova","call", ["ImageResizer", "resize", argrec], [result])
   CALL displayPhoto(result,result)
 END FUNCTION
