@@ -3,6 +3,7 @@
 #use "make gmi.install" to install on the simulator or device depending on the TARGET
 
 BUNDLE_IDENTIFIER   = com.4js.resizerdemo
+BUNDLE_IDENTIFIER_GMA = com.fourjs.cdvimageresizer
 APPNAME             = CDVResize
 DEVICE              = simulator
 MODE                = debug
@@ -10,9 +11,18 @@ IDENTITY='(59W7RY75ZU)'
 PROVISIONING_PROFILE=/Users/leo/Library/MobileDevice/Provisioning\ Profiles/4js_wildcard
 VERBOSE=yes
 
-PLUGIN=../..
-# in case you build the demo when having the plugin checked out of github 
-# then we use the native code from this repository
+# deduce the name from this repository
+DIR_UP=$(shell dirname $(CURDIR)) 
+PLUGINDIR=$(shell dirname $(DIR_UP))
+PLUGIN=$(shell basename $(PLUGINDIR))
+
+# the android part depends on code of cordova-plugin-camera
+# thats why this plugin needs to be bundled too for GMA
+# see ../../src/android/ImageResizer.java:
+#   import org.apache.cordova.camera.FileHelper;
+# you need to have checked out cordova-plugin-camera in a sibling
+# directory of this plugin to make the GMA build working!
+
 
 MODULES  = $(patsubst %.4gl, %.42m, $(wildcard *.4gl))
 FORMS    = $(patsubst %.per, %.42f, $(wildcard *.per))
@@ -30,7 +40,7 @@ run: main.42m
 	FGLLDPATH=$(FGLLDPATH) fglrun main
 
 define gmibuild
-	gmibuildtool --install=$(1) --verbose=$(VERBOSE) --app-name=$(APPNAME) --bundle-id=$(BUNDLE_IDENTIFIER) --provisioning=$(PROVISIONING_PROFILE) --certificate=$(IDENTITY) --device=$(DEVICE) --mode=$(MODE) $(EXTENSION_LIBS) --build-cordova=$(PLUGIN)
+	gmibuildtool --install=$(1) --verbose=$(VERBOSE) --app-name=$(APPNAME) --bundle-id=$(BUNDLE_IDENTIFIER) --provisioning=$(PROVISIONING_PROFILE) --certificate=$(IDENTITY) --device=$(DEVICE) --mode=$(MODE) $(EXTENSION_LIBS) --build-cordova=../../../$(PLUGIN)
 endef
 
 gmi.build: all 
@@ -51,9 +61,24 @@ else
 endif
 	open resizer.xcodeproj
 
+
+../../../cordova-plugin-camera:
+	cd ../../.. && git clone https://github.com/leopatras/cordova-plugin-camera.git && cd -
+
+gma.build: all ../../../cordova-plugin-camera
+	rm -rf gma
+	cd ../../.. && gmabuildtool scaffold --install-plugins ./cordova-plugin-camera,./$(PLUGIN) && cd -
+	-gmabuildtool build --build-quietly --build-cordova cordova-plugin-camera,$(PLUGIN) --build-app-package-name $(BUNDLE_IDENTIFIER_GMA) 
+#temporary hack for GMA-1467
+	cp ./build.gradle gma/project/build.gradle
+	gmabuildtool build --build-quietly --build-cordova cordova-plugin-camera,$(PLUGIN) --build-app-package-name $(BUNDLE_IDENTIFIER_GMA) 
+
+gma.installsim: gma.build
+	$$ANDROID_SDK_ROOT/platform-tools/adb install -r ./gma/project/app/build/app/outputs/apk/gma/app-unsigned.apk
+
 clean::
 	rm -f *.sch *.dbs *.42*
-	rm -rf build bin distbin 
+	rm -rf build bin distbin gma
 	rm -f cordovamap.txt gmi/*.a gmi/link_flags.sh *.4pwvs *.4pwdb
 
 distclean::clean

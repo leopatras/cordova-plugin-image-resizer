@@ -1,0 +1,33 @@
+/*
+ * FOURJS_START_COPYRIGHT(P,2013)
+ * Property of Four Js*
+ * (c) Copyright Four Js 2013, 2018. All Rights Reserved.
+ * * Trademark of Four Js Development Tools Europe Ltd
+ *   in the United States and elsewhere
+ * FOURJS_END_COPYRIGHT
+ */
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:3.2.0"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+    if(project.hasProperty('buildFolderPath')) {
+        buildDir = "$buildFolderPath/${project.name}"
+    }
+}
