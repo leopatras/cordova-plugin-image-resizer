@@ -7,7 +7,7 @@ APPNAME             = CDVResize
 DEVICE              = simulator
 MODE                = debug
 IDENTITY='(59W7RY75ZU)'
-PROVISIONING_PROFILE=/Users/leo/Library/MobileDevice/Provisioning\ Profiles/fourjs_wildcard
+PROVISIONING_PROFILE=$(HOME)/Library/MobileDevice/Provisioning\ Profiles/fourjs_wildcard
 VERBOSE=yes
 
 # deduce the name from this repository
