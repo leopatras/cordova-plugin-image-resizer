@@ -2,13 +2,12 @@
 #calling make without parameters simply creates an GMI executable for the simulator
 #use "make gmi.install" to install on the simulator or device depending on the TARGET
 
-BUNDLE_IDENTIFIER   = com.4js.resizerdemo
-BUNDLE_IDENTIFIER_GMA = com.fourjs.cdvimageresizer
+BUNDLE_IDENTIFIER   = com.fourjs.cdvimageresizer
 APPNAME             = CDVResize
 DEVICE              = simulator
 MODE                = debug
 IDENTITY='(59W7RY75ZU)'
-PROVISIONING_PROFILE=/Users/leo/Library/MobileDevice/Provisioning\ Profiles/4js_wildcard
+PROVISIONING_PROFILE=/Users/leo/Library/MobileDevice/Provisioning\ Profiles/fourjs_wildcard
 VERBOSE=yes
 
 # deduce the name from this repository
@@ -68,10 +67,10 @@ endif
 gma.build: all ../../../cordova-plugin-camera
 	rm -rf gma
 	cd ../../.. && gmabuildtool scaffold --install-plugins ./cordova-plugin-camera,./$(PLUGIN) && cd -
-	-gmabuildtool build --build-quietly --build-cordova cordova-plugin-camera,$(PLUGIN) --build-app-package-name $(BUNDLE_IDENTIFIER_GMA) 
+	-gmabuildtool build --build-quietly --build-cordova cordova-plugin-camera,$(PLUGIN) --build-app-package-name $(BUNDLE_IDENTIFIER) 
 #temporary hack for GMA-1467
 	cp ./build.gradle gma/project/build.gradle
-	gmabuildtool build --build-quietly --build-cordova cordova-plugin-camera,$(PLUGIN) --build-app-package-name $(BUNDLE_IDENTIFIER_GMA) 
+	gmabuildtool build --build-quietly --build-cordova cordova-plugin-camera,$(PLUGIN) --build-app-package-name $(BUNDLE_IDENTIFIER) 
 
 gma.installsim: gma.build
 	$$ANDROID_SDK_ROOT/platform-tools/adb install -r ./gma/project/app/build/app/outputs/apk/gma/app-unsigned.apk
