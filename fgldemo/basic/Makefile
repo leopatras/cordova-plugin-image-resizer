@@ -48,6 +48,7 @@ gmi.build: all
 gmi.install: all 
 	$(call gmibuild,yes)
 
+
 openxcode:
 	@rm -f gmi.env
 ifdef GMIDIR
@@ -59,6 +60,14 @@ else
 	$(error FGLDIR must be set)
 endif
 	open resizer.xcodeproj
+
+gmi.installplugin:
+	gmibuildtool --install-plugins=../../
+
+#we open Studio...assuming MacOSX and GMI
+openGSTGMI: gmi.installplugin
+	echo "Please choose the IOS simulator environment in Studio"
+	open resizer.4pw
 
 
 ../../../cordova-plugin-camera:
@@ -78,7 +87,7 @@ gma.installsim: gma.build
 clean::
 	rm -f *.sch *.dbs *.42*
 	rm -rf build bin distbin gma
-	rm -f cordovamap.txt gmi/*.a gmi/link_flags.sh *.4pwvs *.4pwdb
+	rm -f cordovamap.txt gmi/*.a gmi/link_flags.sh *.4pwvs *.4pwdb *.4pwcfg
 
 distclean::clean
 	rm -rf gmi.env resizer.xcodeproj/project.xcworkspace/ resizer.xcodeproj/xcuserdata/

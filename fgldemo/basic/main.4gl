@@ -2,7 +2,7 @@ IMPORT os
 IMPORT FGL fgldialog
 DEFINE uri STRING
 MAIN
-    DEFINE asseturl,fname STRING
+    DEFINE asseturl STRING
     MENU "Resizer"
       COMMAND "Choose + Resize"
         CALL ui.Interface.frontCall("mobile", "choosePhoto", [], asseturl)
